@@ -15,13 +15,13 @@ module FriendlyId
     #
     # If you want to search only by the friendly id, use {#find_by_friendly_id}.
     # @raise ActiveRecord::RecordNotFound
-    def find(*args)
+    def find(*args, soft: false)
       id = args.first
       return super if args.count != 1 || id.unfriendly_id?
       first_by_friendly_id(id).tap {|result| return result unless result.nil?}
       return super if potential_primary_key?(id)
 
-      raise_not_found_exception(id)
+      soft ? false : raise_not_found_exception(id)
     end
 
     # Returns true if a record with the given id exists.
