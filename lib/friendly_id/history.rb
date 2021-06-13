@@ -123,14 +123,21 @@ method.
     def create_slug
       return unless friendly_id
       return if history_is_up_to_date?
+
+      create_history_item(slug_change.first) if slugs.empty?
+      create_history_item(friendly_id)
+    end
+
+    def create_history_item(slug_name)
       # Allow reversion back to a previously used slug
-      relation = slugs.where(:slug => friendly_id)
+      relation = slugs.where(:slug => slug_name)
       if friendly_id_config.uses?(:scoped)
         relation = relation.where(:scope => serialized_scope)
       end
+
       relation.destroy_all unless relation.empty?
       slugs.create! do |record|
-        record.slug = friendly_id
+        record.slug = slug_name
         record.scope = serialized_scope if friendly_id_config.uses?(:scoped)
       end
     end
