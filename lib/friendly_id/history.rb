@@ -124,7 +124,7 @@ method.
       return unless friendly_id
       return if history_is_up_to_date?
 
-      create_history_item(slug_change.first) if slugs.empty?
+      create_history_item(slug_change.first) if slug_changed? && slugs.empty?
       create_history_item(friendly_id)
     end
 
